@@ -934,6 +934,13 @@ function onShow(el,fn){var s=el.closest('.slide');var prev=s.__onShow;s.__onShow
 fromHash();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){fit(slides[cur]);});
 })();
+
+/* ===== Keep the screen awake while the deck is open ===== */
+(function(){if(!('wakeLock' in navigator))return;var lock=null;
+  function req(){if(document.visibilityState!=='visible'||lock)return;
+    navigator.wakeLock.request('screen').then(function(l){lock=l;l.addEventListener('release',function(){lock=null;});}).catch(function(){});}
+  req();document.addEventListener('visibilitychange',req);
+  ['click','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,req,{passive:true});});})();
 </script>
 </body>
 </html>
